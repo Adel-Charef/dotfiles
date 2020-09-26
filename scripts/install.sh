@@ -19,8 +19,6 @@ function install {
 
 # Basics
 install awscli
-install chrome-gnome-shell
-install chromium-browser
 install curl
 install dialog
 install exfat-utils
@@ -32,11 +30,6 @@ install openvpn
 install tree
 install vim
 install wget
-
-# Image processing
-install gimp
-install jpegoptim
-install optipng
 
 # Fun stuff
 install figlet

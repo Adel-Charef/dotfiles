@@ -1,10 +1,9 @@
-# Dotfiles for Ubuntu 💜
+# Dotfiles for Ubuntu 🖥
 
 My preferred starting configuration for Ubuntu Desktop. Current version 20.04 Focal Fossa.
 
-The [installation script included](https://github.com/Adel-Charef/dotfiles/blob/ubuntu-20.04/scripts/install.sh) will install a suggested serving of programs and applications, found within the `scripts/` directory. Please verify that you want these before running the script.
+The [installation script included](https://github.com/Adel-Charef/dotfiles/blob/master/install.sh) will install a suggested serving of programs and applications, found within the `scripts/` directory. Please verify that you want these before running the script.
 
-Add or delete files in `scripts/install.sh` and `scripts/programs/` to modify your installation.
 
 ## Usage
 
@@ -17,18 +16,17 @@ sudo apt install git vim -y
 Use Vim to create any SSH keys you need to access GitHub, and remember to run `ssh-add` as well as `chmod 600 <key_name>`. Then clone this repository:
 
 ```sh
-git clone git@github.com:victoriadrake/dotfiles.git
+git@github.com:Adel-Charef/dotfiles.git
 
 # Or use HTTPS
-git clone https://github.com/victoriadrake/dotfiles.git
+git clone https://github.com/Adel-Charef/dotfiles.git
 ```
-
-You may optionally like to pass the `--depth` argument to clone only a few of the [most recent commits](https://github.com/victoriadrake/dotfiles/commits/master).
 
 Close Firefox if it's open, then run the installation script.
 
 ```sh
 cd dotfiles/scripts/
+chmod +x install.sh
 ./install.sh
 ```
 
@@ -93,10 +91,9 @@ Run `man dconf` on your machine for more.
 
 ## Your personal CLI tool Makefile
 
-See the Makefile in this repository for some helpful command aliases. Read about [self-documenting Makefiles on my blog](https://victoria.dev/blog/how-to-create-a-self-documenting-makefile/).
+See the Makefile in this repository for some helpful command aliases. Read about [self-documenting Makefiles on this blog](https://victoria.dev/blog/how-to-create-a-self-documenting-makefile/).
 
 ## Recommended additions
 
 - GNOME Tweaks
 - [Emoji Selector](https://extensions.gnome.org/extension/1162/emoji-selector/) ❤️✨🦄
-- [Clipboard Indicator](https://extensions.gnome.org/extension/779/clipboard-indicator/)
