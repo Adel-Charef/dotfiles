@@ -25,6 +25,11 @@ git clone https://github.com/Adel-Charef/dotfiles.git
 Close Firefox if it's open, then run the installation script.
 
 ```sh
+# To install vim plugins
+cd dotfiles/
+chmod +x install.sh
+./vundle.sh
+# To install important packages
 cd dotfiles/scripts/
 chmod +x install.sh
 ./install.sh
