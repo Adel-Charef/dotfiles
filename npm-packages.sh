@@ -10,3 +10,4 @@ npm install -g autoprefixer postcss-cli
 npm install -g markdown-link-check
 npm install -g standard
 npm install -g vue
+npm install -g bower
