@@ -35,6 +35,16 @@ install wget
 install figlet
 install lolcat
 
+# install nodejs
+curl -sL https://deb.nodesource.com/setup_12.x | sudo -E bash -
+sudo apt-get install nodejs
+
+# Fix npm permissions
+mkdir ~/.npm-global
+npm config set prefix '~/.npm-global'
+export PATH=~/.npm-global/bin:$PATH
+source ~/.profile
+
 # Run all scripts in programs/
 for f in programs/*.sh; do bash "$f" -H; done
 
@@ -43,5 +53,5 @@ sudo apt upgrade -y
 sudo apt autoremove -y
 
 # Fun hello
-figlet "Hello!" | lolcat
+figlet "Hello World!" | lolcat
 
