@@ -1,11 +1,51 @@
-# History control
-# don't use duplicate lines or lines starting with space
-HISTCONTROL=ignoreboth
-HISTSIZE=1000
-HISTFILESIZE=2000
-# append to the history file instead of overwrite
+# ~/.bashrc: executed by bash(1) for non-login shells.
+# see /usr/share/doc/bash/examples/startup-files (in the package bash-doc)
+# for examples
+
+# If not running interactively, don't do anything
+[ -z "$PS1" ] && return
+
+# don't put duplicate lines in the history. See bash(1) for more options
+# ... or force ignoredups and ignorespace
+HISTCONTROL=ignoredups:ignorespace
+
+# append to the history file, don't overwrite it
 shopt -s histappend
 
+# for setting history length see HISTSIZE and HISTFILESIZE in bash(1)
+HISTSIZE=1000
+HISTFILESIZE=2000
+
+# check the window size after each command and, if necessary,
+# update the values of LINES and COLUMNS.
+shopt -s checkwinsize
+
+# make less more friendly for non-text input files, see lesspipe(1)
+[ -x /usr/bin/lesspipe ] && eval "$(SHELL=/bin/sh lesspipe)"
+
+# set variable identifying the chroot you work in (used in the prompt below)
+if [ -z "$debian_chroot" ] && [ -r /etc/debian_chroot ]; then
+    debian_chroot=$(cat /etc/debian_chroot)
+fi
+
+# set a fancy prompt (non-color, unless we know we "want" color)
+case "$TERM" in
+    xterm-color) color_prompt=yes;;
+esac
+
+# enable color support of ls and also add handy aliases
+if [ -x /usr/bin/dircolors ]; then
+    test -r ~/.dircolors && eval "$(dircolors -b ~/.dircolors)" || eval "$(dircolors -b)"
+    alias ls='ls --color=auto'
+    #alias dir='dir --color=auto'
+    #alias vdir='vdir --color=auto'
+
+    alias grep='grep --color=auto'
+    alias fgrep='fgrep --color=auto'
+    alias egrep='egrep --color=auto'
+fi
+
+# some more ls aliases
 # Aliases
 alias cp='cp -Rv'
 alias ls='ls --color=auto -ACF'
@@ -18,13 +58,7 @@ alias weather='curl wttr.in/?0'
 alias wget='wget -c'
 alias tree="tree -aI 'test*|.git|node_modules|resources'"
 
-if [ -f ~/.git-completion.bash ]; then
-    . ~/.git-completion.bash
-
-    # Add git completion to aliases
-    __git_complete goto _git_checkout
-fi
-
+# Git aliasas
 alias gcom='git commit'
 alias gsup='git status'
 alias goto='git checkout'
@@ -32,71 +66,45 @@ alias branches='git branch -v'
 alias firewood='for remote in `git branch -r`; do git branch --track ${remote#origin/} $remote; done'
 alias remotes='git remote -v'
 
-alias pip='pip3'
-alias pym='python3 manage.py'
+# virtualenv aliasas
 alias mkenv='python3 -m venv env'
 alias startenv='source env/bin/activate && which python3'
 alias stopenv='deactivate'
 
-# Use programs without a root-equivalent group
+# Docker aliasas
 alias docker='sudo docker'
 alias docker-compose='sudo docker-compose'
 alias prtn='sudo protonvpn'
 
-# Show contents of dir after action
-function cd () {
-    builtin cd "$1"
-    ls -ACF
+# Add an "alert" alias for long running commands.  Use like so:
+#   sleep 10; alert
+alias alert='notify-send --urgency=low -i "$([ $? = 0 ] && echo terminal || echo error)" "$(history|tail -n1|sed -e '\''s/^\s*[0-9]\+\s*//;s/[;&|]\s*alert$//'\'')"'
+
+# Alias definitions.
+# You may want to put all your additions into a separate file like
+# ~/.bash_aliases, instead of adding them here directly.
+# See /usr/share/doc/bash-doc/examples in the bash-doc package.
+
+if [ -f ~/.bash_aliases ]; then
+    . ~/.bash_aliases
+fi
+
+# enable programmable completion features (you don't need to enable
+# this, if it's already enabled in /etc/bash.bashrc and /etc/profile
+# sources /etc/bash.bashrc).
+if [ -f /etc/bash_completion ] && ! shopt -oq posix; then
+    . /etc/bash_completion
+fi
+
+# Red pointer for root
+if [ "${UID}" -eq "0" ]; then
+    pointerC="${txtred}"
+fi
+
+
+gitBranch() {
+    git branch 2> /dev/null | sed -e '/^[^*]/d' -e 's/* \(.*\)/(\1)/'
 }
-
-# Golang install or upgrade
-function getgolang () {
-    sudo rm -rf /usr/local/go
-    wget -q -P tmp/ https://dl.google.com/go/go"$@".linux-amd64.tar.gz
-    sudo tar -C /usr/local -xzf tmp/go"$@".linux-amd64.tar.gz
-    rm -rf tmp/
-    go version
-}
-
-# GHCLI install or upgrade
-function getghcli () {
-    wget -q -P tmp/ https://github.com/cli/cli/releases/download/v"$@"/gh_"$@"_linux_amd64.deb
-    cd tmp/ && sudo dpkg -i gh_"$@"_linux_amd64.deb
-    cd .. && rm -rf tmp/
-    gh --version
-}
-
-# Hugo install or upgrade
-function gethugo () {
-    wget -q -P tmp/ https://github.com/gohugoio/hugo/releases/download/v"$@"/hugo_extended_"$@"_Linux-64bit.tar.gz
-    tar xf tmp/hugo_extended_"$@"_Linux-64bit.tar.gz -C tmp/
-    sudo mv -f tmp/hugo /usr/local/bin/
-    rm -rf tmp/
-    hugo version
-}
-
-# Hugo site from exampleSite in themes/
-function hugotheme () {
-    HUGO_THEME="$1" hugo "${@:2}" --themesDir ../.. -v
-}
-
-# Markdown link check in a folder, recursive
-function mlc () {
-    find $1 -name \*.md -exec markdown-link-check -p {} \;
-}
-
-# Go
-export PATH=$PATH:/usr/local/bin:/usr/local/go/bin:~/.local/bin:$GOPATH/bin
-export GOPATH=~/go
-
-# Vim for life
-export EDITOR=/usr/bin/vim
-
-# Bash completion
-source ~/.git-completion.bash
-
-# Color prompt
-export TERM=xterm-256color
 
 # Colours have names too. Stolen from @tomnomnom who stole it from Arch wiki
 txtblk='\[\e[0;30m\]' # Black - Regular
@@ -142,29 +150,14 @@ gitC="${txtpur}"
 pointerC="${txtwht}"
 normalC="${txtrst}"
 
-# Red pointer for root
-if [ "${UID}" -eq "0" ]; then
-    pointerC="${txtred}"
-fi
-
-gitBranch() {
-    git branch 2> /dev/null | sed -e '/^[^*]/d' -e 's/* \(.*\)/(\1)/'
-}
 
 export PS1="${pathC}\w ${gitC}\$(gitBranch) ${pointerC}\$${normalC} "
 
-# Uncomment to use powerline-shell prompt
-# function _update_ps1() {
-#     PS1=$(powerline-shell $?)
-# }
-# if [[ $TERM != linux && ! $PROMPT_COMMAND =~ _update_ps1 ]]; then
-#     PROMPT_COMMAND="_update_ps1; $PROMPT_COMMAND"
-# fi
+# Vim for life
+export EDITOR=/usr/bin/vim
 
-export NVM_DIR="$HOME/.nvm"
-[ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm
-[ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"  # This loads nvm bash_completion
+# Bash completion
+source ~/.git-completion.bash
 
-# Install Ruby Gems to ~/gems
-export GEM_HOME="$HOME/gems"
-export PATH="$HOME/gems/bin:$PATH"
+# Color prompt
+export TERM=xterm-256color
