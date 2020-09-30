@@ -71,6 +71,11 @@ alias mkenv='python3 -m venv env'
 alias startenv='source env/bin/activate && which python3'
 alias stopenv='deactivate'
 
+# Code editors aliasas
+alias c='code .'
+alias i='intellij-idea-community .'
+alias a='android-studio .'
+
 # Docker aliasas
 alias docker='sudo docker'
 alias docker-compose='sudo docker-compose'
