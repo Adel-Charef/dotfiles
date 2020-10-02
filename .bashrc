@@ -71,6 +71,15 @@ alias mkenv='python3 -m venv env'
 alias startenv='source env/bin/activate && which python3'
 alias stopenv='deactivate'
 
+# Python
+alias python='python3'
+alias pip='pip3'
+alias ipython='ipython3'
+
+# Django
+alias djproject='django-admin startproject my_project && cd my_project && mkenv && touch requirements.txt'
+alias djapp='python manage.py startapp my_app && cd my_app && touch urls.py && mkdir templates static && cd static && mkdir css js imgs && cd ../templates && touch base.html && cd ../..'
+
 # Code editors aliasas
 alias c='code .'
 alias i='intellij-idea-community .'
