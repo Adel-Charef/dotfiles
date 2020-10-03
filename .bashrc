@@ -90,6 +90,69 @@ alias docker='sudo docker'
 alias docker-compose='sudo docker-compose'
 alias prtn='sudo protonvpn'
 
+# make yourself look all busy and fancy to non-technical people
+alias busy="cat /dev/urandom | hexdump -C | grep --color=always 'ca fe'"
+
+# exit terminal
+alias x="exit"
+
+# system reboot
+alias rb="sudo reboot"
+
+# list dirs/files in tree format
+alias tree="tree -ash -CF --du"
+
+# scan recursively under home directory and load last modified Python file into editor
+alias edlast="find '${HOME}' -type f -name '*.py' -printf '%T@ %p\n' | sort --numeric --stable --key=1 | tail -n 1 | cut -d' ' -f2 | ed"
+
+# show last 50 modified files in current dir (recursive)
+alias latest="find . -type f -printf '%TY-%Tm-%Td %TR %p\n' 2>/dev/null | grep -v '.git' | sort -n | tail -n 50"
+
+# count all files in current directory (recursive)
+alias countfiles="find . -type f | wc -l"
+
+# count installed system packages
+alias countpackages="dpkg -l | grep '^ii' | wc -l"
+
+# show counts of file extensions used in current directory (recursive)
+alias filetypes="find . -type f | grep -v '.git' | sed -e 's/.*\.//' | sed -e 's/.*\///' | sort | uniq -c | sort -rn"
+
+# color and side-by-side for diffs (requires colordiff package)
+alias diff="colordiff -s"
+
+# grep recursively with case-insensitive match and other defaults
+alias rgrep="\rgrep \
+        --binary-files=without-match \
+        --color=auto \
+        --devices=skip \
+        --ignore-case \
+        --line-number \
+        --no-messages \
+        --with-filename \
+        --exclude-dir=.cache \
+        --exclude-dir=.git \
+        --exclude-dir=.tox \
+        --exclude=*.css \
+        --exclude=*.js \
+        --exclude=*.svg"
+alias rg="rgrep"
+
+# navigate up the directory tree
+alias ..="cd .."
+alias ...="cd ../.."
+alias ....="cd ../../.."
+alias .....="cd ../../../.."
+alias ......="cd ../../../../.."
+alias .......="cd ../../../../../.."
+alias ........="cd ../../../../../../.."
+alias cd..="cd .."
+alias cd...="cd ../.."
+alias cd....="cd ../../.."
+alias cd.....="cd ../../../.."
+alias cd......="cd ../../../../.."
+alias cd.......="cd ../../../../../.."
+alias cd........="cd ../../../../../../.."
+
 # Add an "alert" alias for long running commands.  Use like so:
 #   sleep 10; alert
 alias alert='notify-send --urgency=low -i "$([ $? = 0 ] && echo terminal || echo error)" "$(history|tail -n1|sed -e '\''s/^\s*[0-9]\+\s*//;s/[;&|]\s*alert$//'\'')"'
@@ -115,9 +178,91 @@ if [ "${UID}" -eq "0" ]; then
     pointerC="${txtred}"
 fi
 
+# open a file or URL in the preferred application and hide all console output
+open () {
+    xdg-open "$@" > /dev/null 2>&1
+}
+alias o="open"
 
+# show git branch
 gitBranch() {
     git branch 2> /dev/null | sed -e '/^[^*]/d' -e 's/* \(.*\)/(\1)/'
+}
+
+# search command history by regex (case-insensitive) show last n matches
+# usage: h <pattern>
+cmdHist () {
+    local n="150"
+    history | grep -i --color=always "$1" | tail -n "$n"
+}
+
+# search process info by regex (case-insensitive)
+# usage: psgrep <pattern>
+psgrep () {
+    ps -ef | grep -i --color=always "$1" | grep -v "grep" | sort -n | less
+}
+
+# rename all files in current directory with ".jpeg" extension to ".jpg" and lowercase any .JPG extensions
+img-fix-jpg() {
+    rename 's/\.jpe?g$/.jpg/i' *
+}
+
+# convert all .png and .webp images in the current directory to .jpg format
+# save with renamed extensions and delete originals (requires gnu parallel and webp)
+convert-images-to-jpgs () {
+    findpngs () { find . -maxdepth 1 -type f -iname "*.png" -o -iname "*.webp"; }
+    if [[ -n $(findpngs) ]]; then
+        ( findpngs | parallel convert -quality 95% {} {.}.jpg ) &&
+        ( findpngs | parallel rm {} )
+    else
+        echo 'nothing to convert'
+    fi
+}
+
+# list dimensions of images in the current directory
+img-sizes () {
+    shopt -s nullglob nocaseglob
+    for f in  *{gif,jpg,png}; do
+        if [[ -e "$f" ]]; then
+            identify -ping -format "%[width]x%[height] - $f\n" "$f" 2> /dev/null
+        fi
+    done
+    shopt -u nullglob nocaseglob
+}
+
+# expand initial tabs into 4 spaces and convert line endings
+# conversion done in-place (requires dos2unix and moreutils packages)
+fix-whitespace () {
+    if [[ $# -eq 0 ]]; then
+        echo "filename argument required"
+    else
+        expand -i -t 4 "$1" | sponge "$1"
+        dos2unix --quiet "$1"
+    fi
+}
+
+# package maintenance
+apt-up () {
+    # reload package index files from sources
+    sudo apt --no-allow-insecure-repositories update && echo &&
+    # upgrade installed packages
+    sudo apt full-upgrade && echo &&
+    # check for broken dependencies
+    sudo apt-get check && echo &&
+    # fix broken dependencies
+    sudo apt --fix-broken install && echo &&
+    # fix missing dependencies
+    sudo apt --fix-missing install && echo &&
+    # purge packages that are no longer needed
+    sudo apt --purge autoremove && echo &&
+    # purge orphaned configs from removed packages
+    purge-apt-configs &&
+    # remove cached packages
+    sudo apt clean && echo &&
+    # reload package index files from sources
+    sudo apt --no-allow-insecure-repositories update && echo &&
+    # display package count
+    echo "${REVERSEGREEN}$(countpackages) packages currently installed${RESTORE}"
 }
 
 eval $(thefuck --alias)
