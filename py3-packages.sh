@@ -2,14 +2,13 @@
 
 echo "🐍 Installing ..."
 sudo apt install python3-venv python3-pip -y
-pip install Django
-pip install Flask
-pip install bs4
-pip install requests
-pip install pyperclip
-pip install pylint
-pip install black
-pip install pymongo
-pip install psycopg2
-pip install selenium
-pip install mysql-connector-python
+pip3 install Django
+pip3 install Flask
+pip3 install bs4
+pip3 install requests
+pip3 install pyperclip
+pip3 install pylint
+pip3 install pymongo
+pip3 install psycopg2
+pip3 install selenium
+pip3 install mysql-connector-python
